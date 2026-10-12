@@ -1,4 +1,4 @@
-const CACHE='hangeol-logo-header-clean-v3';
+const CACHE='hangeol-soft-header-v6';
 const FILES=['./','./index.html','./app.js','./manifest.webmanifest','./icon-192.png','./icon-180.png','./icon-512.png','./logo-hangeol.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('hangeol-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
