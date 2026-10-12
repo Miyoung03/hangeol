@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#F7F6F3">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -38,6 +38,48 @@
  .header .month-select button{width:25px}
  .header .month-select span{min-width:68px;font-size:11px}
 }
+
+/* v7 | 가로 확대 방지 + 누적시간 카드 시각적 균형 */
+html,body{touch-action:pan-x pan-y;overflow-x:hidden}
+button,a,[role="button"]{touch-action:manipulation}
+/* iOS Safari: 폼 필드가 16px 미만일 때 자동 확대하는 문제 방지 */
+input,textarea,select{font-size:16px!important}
+.hero-month-card{padding:19px 19px 16px;border-radius:22px}
+.hero-month-card .eyebrow{font-size:14px;font-weight:760;letter-spacing:-.35px;color:#393b3d}
+.hero-month-card .hero-carousel{margin-top:16px}
+.hero-month-card .slide-cat-head{gap:8px;min-height:38px}
+.hero-month-card .slide-cat-title{font-size:17px;line-height:1.25;letter-spacing:-.35px;gap:8px;font-weight:760;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hero-month-card .slide-cat-icon{height:34px;width:34px;border-radius:11px;border-color:#eeedef;font-size:19px}
+.hero-month-card .slide-cat-icon svg{height:21px;width:21px}
+.hero-month-card .slide-goal-button{font-size:12px;line-height:1;min-height:32px;padding:8px 10px;border-radius:10px;border-color:#e4e5e5;color:#686b6d;font-weight:700}
+.hero-month-card .slide-headline{padding-top:11px;min-height:0;align-items:center;gap:10px}
+.hero-month-card .slide-headline>div:first-child{min-width:0}
+.hero-month-card .slide-caption{font-size:11px;line-height:1.4;color:#98938f;margin:0 0 6px}
+.hero-month-card .slide-duration{font-size:0;line-height:1.15;display:flex;align-items:baseline;gap:0;white-space:nowrap;letter-spacing:0;font-variant-numeric:tabular-nums}
+.hero-month-card .slide-duration .time-value{font-size:29px;font-weight:800;letter-spacing:-1.15px;color:#292c2e}
+.hero-month-card .slide-duration .time-unit{font-size:14px;font-weight:600;letter-spacing:-.35px;margin:0 7px 0 2px;color:#55595b}
+.hero-month-card .slide-duration .time-value:last-of-type{font-size:29px}
+.hero-month-card .slide-ring{height:72px;width:72px}
+.hero-month-card .slide-ring b{font-size:14px;font-weight:760;font-variant-numeric:tabular-nums;color:#42494c}
+.hero-month-card .slide-progress{height:6px;margin-top:15px;background:#eff0ef}
+.hero-month-card .slide-stats{margin-top:15px;padding-top:13px;gap:0;border-color:#f0efed}
+.hero-month-card .slide-stat{min-width:0;padding-right:10px}
+.hero-month-card .slide-stat+div{padding-left:16px}
+.hero-month-card .slide-stat span{font-size:11px;color:#96928e;line-height:1.5}
+.hero-month-card .slide-stat b{font-size:16px;line-height:1.4;font-weight:750;letter-spacing:-.3px;color:#404346;margin-top:3px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hero-month-card .hero-controls{margin-top:15px;justify-content:center;gap:20px;min-height:30px}
+.hero-month-card .slide-arrow{width:29px;height:29px;font-size:20px;line-height:1;background:#fafafa;border-color:#ececeb;color:#767b7e}
+.hero-month-card .slide-dots{gap:6px;min-height:10px}
+.hero-month-card .slide-dot{height:6px;width:6px;background:#dededc}
+.hero-month-card .slide-dot.active{height:6px;width:21px;background:#61686b}
+@media(max-width:380px){
+ .hero-month-card{padding:17px 15px 14px}
+ .hero-month-card .slide-duration .time-value{font-size:26px}
+ .hero-month-card .slide-duration .time-value:last-of-type{font-size:26px}
+ .hero-month-card .slide-duration .time-unit{font-size:13px;margin-right:5px}
+ .hero-month-card .slide-ring{height:65px;width:65px}
+ .hero-month-card .slide-stat b{font-size:15px}
+}
 </style>
 </head>
 <body>
@@ -45,7 +87,7 @@
 <header class="header"><div class="brand"><img class="brand-logo" src="./logo-hangeol.png" alt="한결 로고"><p>하루하루 쌓아가는 나의 시간</p></div><div class="month-select" id="month-control"><button id="month-prev" aria-label="이전 달">‹</button><span id="month-label"></span><button id="month-next" aria-label="다음 달">›</button></div></header>
 <main>
 <section class="page" id="page-home">
-<section class="card" aria-label="이번 달 항목별 누적시간"><div class="hero-topline"><h2 class="eyebrow">이번 달 누적시간</h2></div><div class="hero-carousel" id="hero-carousel" tabindex="0"></div><div class="hero-controls"><button class="slide-arrow" id="hero-prev" aria-label="이전 항목">‹</button><div class="slide-dots" id="hero-dots"></div><button class="slide-arrow" id="hero-next" aria-label="다음 항목">›</button></div><span id="hero-count" hidden aria-hidden="true"></span></section>
+<section class="card hero-month-card" aria-label="이번 달 항목별 누적시간"><div class="hero-topline"><h2 class="eyebrow">이번 달 누적시간</h2></div><div class="hero-carousel" id="hero-carousel" tabindex="0"></div><div class="hero-controls"><button class="slide-arrow" id="hero-prev" aria-label="이전 항목">‹</button><div class="slide-dots" id="hero-dots"></div><button class="slide-arrow" id="hero-next" aria-label="다음 항목">›</button></div><span id="hero-count" hidden aria-hidden="true"></span></section>
 <section class="card"><div class="section-heading"><h2>시간 기록하기</h2></div><p class="small-sub">항목을 먼저 선택한 다음 시간을 기록하세요.</p><label class="form-label">기록할 항목</label><div id="home-category-picker" class="cat-picker"></div><div class="cat-quick-selected" id="selected-category-status"></div><div class="rec-buttons"><button class="rec-btn" id="start-timer" type="button"><span data-icon="play"></span>시작</button><button class="rec-btn" id="stop-timer" type="button"><span data-icon="stop"></span>종료</button><button class="rec-btn" id="direct-input" type="button"><span data-icon="pencil"></span>직접 입력</button></div><div id="timer-strip" class="clock-line" hidden><span id="timer-message"></span><strong id="timer-clock"></strong></div><div id="pending-strip" class="pending-box" hidden><p id="pending-desc"></p><button id="finish-pending" class="button" type="button">기록 저장</button><button id="discard-pending" class="button outline" type="button">취소</button></div></section>
 <section class="card"><div class="section-heading"><h2>최근 기록</h2><button class="link-button" id="see-all">전체 기록 보기 ›</button></div><div id="recent-list" class="list"></div></section>
 </section>
