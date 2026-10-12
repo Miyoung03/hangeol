@@ -1,4 +1,4 @@
-const CACHE = 'hangeol-app-v3-20261012';
+const CACHE = 'hangeol-app-v4-20261012';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e=>{
   e.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)).then(()=>self.skipWaiting()));
