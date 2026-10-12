@@ -7,7 +7,7 @@ const CAT_ICONS={
  '운동':'<path d="m4 10 3 3m10-6 3 3M8 14l6-6m-9 3-2-2 4-4 2 2m6 10 2 2 4-4-2-2M9 17l8-8"/>',
  '독서':'<path d="M12 6C9 4 5 4 2 5v14c4-1 7-1 10 1 3-2 6-2 10-1V5c-3-1-7-1-10 1Zm0 0v14"/>',
  '기타':'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
- '봉사':'<path d="M12 21s-8-4.5-8-10a4.5 4.5 0 0 1 8-2.7A4.5 4.5 0 0 1 20 11c0 5.5-8 10-8 10Z"/><path d="M3 19h6m6 0h6"/>'
+ '봉사':'<rect x="3.5" y="9" width="17" height="12" rx="2.7"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>'
 };
 function setCategoryVisual(el,cat){const svg=CAT_ICONS[cat.name];if(svg)el.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${svg}</svg>`;else el.textContent=cat.emoji;}
 
@@ -46,7 +46,53 @@ function renderPicker(){const picker=$('home-category-picker');picker.replaceChi
 function renderSelected(){const cat=categoryFor(selectedName()),recorded=sum(monthRecords().filter(r=>r.category===cat.name));$('selected-category-status').textContent=cat.goalMinutes?`월 목표 ${duration(cat.goalMinutes)}`:'월 목표 미설정';}
 function moveSlide(index,smooth=true){slideIndex=Math.max(0,Math.min(state.categories.length-1,index));$('hero-carousel').scrollTo({left:$('hero-carousel').clientWidth*slideIndex,behavior:smooth?'smooth':'instant'});renderDots();}
 function renderDots(){const size=state.categories.length;$('hero-prev').disabled=slideIndex<=0;$('hero-next').disabled=slideIndex>=size-1;$('hero-count').textContent=`${slideIndex+1} / ${size}`;[...$('hero-dots').children].forEach((b,i)=>b.classList.toggle('active',i===slideIndex));}
-function buildSlides(){const track=$('hero-carousel'),dots=$('hero-dots');track.replaceChildren();dots.replaceChildren();const entries=monthRecords();state.categories.forEach((cat,i)=>{const mins=sum(entries.filter(r=>r.category===cat.name)),goal=cat.goalMinutes,pct=goal?Math.round(mins/goal*100):null,ratio=goal?Math.min(100,mins/goal*100):0;const slide=document.createElement('article');slide.className='hero-slide';const head=document.createElement('div');head.className='slide-cat-head';const title=document.createElement('div');title.className='slide-cat-title';const ico=document.createElement('div');ico.className='slide-cat-icon';setCategoryVisual(ico,cat);ico.style.backgroundColor=cat.color+'12';title.append(ico,document.createTextNode(cat.name));const goalButton=document.createElement('button');goalButton.className='slide-goal-button';goalButton.textContent=goal?'목표 변경':'목표 설정';goalButton.onclick=()=>openGoal(cat.name);head.append(title,goalButton);const h=document.createElement('div');h.className='slide-headline';const copy=document.createElement('div');const label=document.createElement('div');label.className='slide-caption';label.textContent='기록한 시간';const number=document.createElement('div');number.className='slide-duration';const hours=Math.floor(mins/60),minute=mins%60;number.innerHTML=`<span class="time-value">${hours}</span><span class="time-unit">시간</span><span class="time-value">${minute}</span><span class="time-unit">분</span>`;copy.append(label,number);const ring=document.createElement('div');ring.className='slide-ring';ring.setAttribute('aria-label',goal?`${pct}% 달성`:'목표 미설정');const circ=document.createElementNS('http://www.w3.org/2000/svg','svg');circ.setAttribute('viewBox','0 0 84 84');const bg=document.createElementNS('http://www.w3.org/2000/svg','circle');for(const [k,v] of Object.entries({cx:'42',cy:'42',r:'34',fill:'none',stroke:'#ebe9e7','stroke-width':'9'}))bg.setAttribute(k,v);const fg=bg.cloneNode();fg.setAttribute('stroke',cat.color);fg.setAttribute('stroke-linecap','round');fg.setAttribute('stroke-dasharray','213.628');fg.setAttribute('stroke-dashoffset',String(213.628*(1-ratio/100)));circ.append(bg,fg);const percent=document.createElement('b');percent.textContent=pct===null?'—':`${pct}%`;ring.append(circ,percent);h.append(copy,ring);const bar=document.createElement('div');bar.className='slide-progress';bar.setAttribute('role','progressbar');bar.setAttribute('aria-valuemin','0');bar.setAttribute('aria-valuemax','100');bar.setAttribute('aria-valuenow',String(Math.round(ratio)));const fill=document.createElement('div');fill.style.width=ratio+'%';fill.style.backgroundColor=cat.color;bar.append(fill);const stats=document.createElement('div');stats.className='slide-stats';const a=document.createElement('div');a.className='slide-stat';const b=document.createElement('div');b.className='slide-stat';const lab1=document.createElement('span');lab1.textContent='남은 시간';const val1=document.createElement('b');val1.textContent=goal?duration(Math.max(0,goal-mins)):'—';const lab2=document.createElement('span');lab2.textContent='이번 달 목표';const val2=document.createElement('b');val2.textContent=goal?duration(goal):'미설정';a.append(lab1,val1);b.append(lab2,val2);stats.append(a,b);slide.append(head,h,bar,stats);track.append(slide);const dot=document.createElement('button');dot.className='slide-dot';dot.type='button';dot.setAttribute('aria-label',`${cat.name} 항목 보기`);dot.onclick=()=>{selected=cat.name;moveSlide(i);renderPicker();renderSelected()};dots.append(dot)});moveSlide(slideIndex,false)}
+function buildSlides(){
+  const track=$('hero-carousel'),dots=$('hero-dots');
+  track.replaceChildren();dots.replaceChildren();
+  const entries=monthRecords();
+  state.categories.forEach((cat,i)=>{
+    const mins=sum(entries.filter(r=>r.category===cat.name));
+    const goal=cat.goalMinutes;
+    const pct=goal?Math.round(mins/goal*100):null;
+    const ratio=goal?Math.min(100,mins/goal*100):0;
+    const slide=document.createElement('article');slide.className='hero-slide';
+    // The category directly precedes '이번 달 누적시간'; no icon or action button.
+    const head=document.createElement('h2');head.className='slide-cat-head';
+    const category=document.createElement('span');category.className='slide-cat-title';category.textContent=cat.name;
+    const descriptor=document.createElement('span');descriptor.className='slide-month-title';descriptor.textContent='이번 달 누적시간';
+    head.append(category,descriptor);
+    const h=document.createElement('div');h.className='slide-headline';
+    const number=document.createElement('div');number.className='slide-duration';
+    const hours=Math.floor(mins/60),minute=mins%60;
+    number.innerHTML=`<span class="time-value">${hours}</span><span class="time-unit">시간</span><span class="time-value">${minute}</span><span class="time-unit">분</span>`;
+    const ring=document.createElement('div');ring.className='slide-ring';
+    ring.setAttribute('role','progressbar');ring.setAttribute('aria-label',`${cat.name} 달성률`);
+    ring.setAttribute('aria-valuemin','0');ring.setAttribute('aria-valuemax','100');
+    if (pct!==null)ring.setAttribute('aria-valuenow',String(Math.min(100,pct)));
+    else ring.setAttribute('aria-valuetext','목표 미설정');
+    const circ=document.createElementNS('http://www.w3.org/2000/svg','svg');circ.setAttribute('viewBox','0 0 84 84');circ.setAttribute('aria-hidden','true');
+    const bg=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    for(const [k,v] of Object.entries({cx:'42',cy:'42',r:'34',fill:'none',stroke:'#ebe9e7','stroke-width':'9'})) bg.setAttribute(k,v);
+    const fg=bg.cloneNode();fg.setAttribute('stroke',cat.color);fg.setAttribute('stroke-linecap','round');fg.setAttribute('stroke-dasharray','213.628');
+    fg.setAttribute('stroke-dashoffset',String(213.628*(1-ratio/100)));
+    circ.append(bg,fg);
+    const percent=document.createElement('b');percent.textContent=pct===null?'—':`${pct}%`;
+    ring.append(circ,percent);h.append(number,ring);
+    const stats=document.createElement('div');stats.className='slide-stats';
+    const a=document.createElement('div');a.className='slide-stat';
+    const b=document.createElement('div');b.className='slide-stat';
+    const lab1=document.createElement('span');lab1.textContent='남은 시간';
+    const val1=document.createElement('b');val1.textContent=goal?duration(Math.max(0,goal-mins)):'—';
+    const lab2=document.createElement('span');lab2.textContent='이번 달 목표';
+    const val2=document.createElement('b');val2.textContent=goal?duration(goal):'미설정';
+    a.append(lab1,val1);b.append(lab2,val2);stats.append(a,b);
+    slide.append(head,h,stats);track.append(slide);
+    const dot=document.createElement('button');dot.className='slide-dot';dot.type='button';
+    dot.setAttribute('aria-label',`${cat.name} 항목 보기`);
+    dot.onclick=()=>{selected=cat.name;moveSlide(i);renderPicker();renderSelected()};dots.append(dot);
+  });
+  moveSlide(slideIndex,false);
+}
 function renderTimer(){const a=state.activeTimer,p=state.pendingSession;$('start-timer').disabled=!!a||!!p;$('stop-timer').disabled=!a;$('start-timer').classList.toggle('active',!!a);$('stop-timer').classList.toggle('warn',!!a);$('timer-strip').hidden=!a;$('pending-strip').hidden=!p;if(a){const secs=Math.max(0,Math.floor((Date.now()-a.startedAt)/1000));$('timer-message').textContent=`${categoryFor(a.category).emoji} ${a.category} 기록 중`;$('timer-clock').textContent=`${pad(Math.floor(secs/3600))}:${pad(Math.floor(secs%3600/60))}:${pad(secs%60)}`;}if(p)$('pending-desc').textContent=`${categoryFor(p.category).emoji} ${p.category} · ${duration(p.minutes)} 저장 대기 중`;}
 function renderHome(){renderPicker();renderSelected();buildSlides();renderTimer();const rec=monthRecords(),list=$('recent-list');list.replaceChildren();if(!rec.length)empty(list,'아직 이달의 기록이 없어요.','시간을 기록하면 이곳에 표시돼요.');else rec.slice(0,4).forEach(r=>list.append(recordRow(r)))}
 function renderRecords(){const rec=monthRecords(),out=$('all-records');$('records-count').textContent=`${rec.length}개 기록`;out.replaceChildren();if(!rec.length)return empty(out,'이 달의 기록이 없어요.','홈에서 시간을 기록해 보세요.');let last='';for(const r of rec){if(r.date!==last){const h=document.createElement('div');h.className='detail-date';h.textContent=r.date;out.append(h);last=r.date}out.append(recordRow(r))}}
