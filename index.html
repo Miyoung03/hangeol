@@ -8,9 +8,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="한결">
 <meta name="description" content="하루하루 쌓아가는 나의 시간, 한결">
-<link rel="manifest" href="./manifest.webmanifest?v=20261013-custom-r12">
-<link rel="icon" type="image/png" href="./icon-192.png?v=20261013-custom-r12">
-<link rel="apple-touch-icon" href="./icon-180.png?v=20261013-custom-r12">
+<link rel="manifest" href="./manifest.webmanifest?v=20261013-cardlayout-r14">
+<link rel="icon" type="image/png" href="./icon-192.png?v=20261013-cardlayout-r14">
+<link rel="apple-touch-icon" href="./icon-180.png?v=20261013-cardlayout-r14">
 <title>한결 · 나의 시간 기록</title>
 <style>
 :root{color-scheme:light;--bg:#f7f6f4;--paper:#fff;--ink:#252525;--sub:#938e89;--line:#e9e7e4;--border:#f0edeb;--soft:#f5f4f2;--accent:#595e62;--warn:#b34b4b;--shadow:0 7px 22px rgba(50,46,41,.035)}
@@ -104,11 +104,76 @@ input,textarea,select{font-size:16px!important}
 .category-empty{grid-column:1/-1;width:100%;margin:8px 0;padding:18px 14px;text-align:center;font-size:13px;line-height:1.7;color:#95918c;background:#f8f7f5;border:1px dashed #dedbd7;border-radius:13px}
 .hero-month-card .category-empty{margin:8px 0 4px}
 .hero-month-card .hero-controls[hidden]{display:none!important}
+
+/* r14 — A안: 큰 숫자+원형 그래프를 가까이, 오른쪽에 목표 정보 세로 정렬 */
+.hero-month-card{padding:18px 19px 14px}
+.hero-month-card .hero-carousel{margin-top:0}
+.hero-month-card .slide-overview{
+ display:grid;
+ grid-template-columns:minmax(0,1fr) minmax(88px,94px);
+ align-items:stretch;
+ gap:11px;
+ margin-top:13px;
+}
+.hero-month-card .slide-headline{
+ display:flex;
+ align-items:center;
+ justify-content:flex-start;
+ min-width:0;
+ gap:7px;
+ padding-top:0;
+ min-height:0;
+}
+.hero-month-card .slide-duration{
+ min-width:0;
+ flex:0 1 auto;
+ display:flex;
+ align-items:baseline;
+ justify-content:flex-start;
+ gap:0;
+ font-variant-numeric:tabular-nums;
+}
+.hero-month-card .slide-duration .time-value,
+.hero-month-card .slide-duration .time-value:last-of-type{font-size:27px;letter-spacing:-1px}
+.hero-month-card .slide-duration .time-unit{font-size:12px;margin:0 3px 0 1px;letter-spacing:-.4px}
+.hero-month-card .slide-ring{width:62px;height:62px;flex:0 0 62px}
+.hero-month-card .slide-ring b{font-size:13px}
+.hero-month-card .slide-stats{
+ display:flex;
+ flex-direction:column;
+ justify-content:center;
+ gap:9px;
+ min-width:0;
+ margin:0;
+ padding:1px 0 1px 12px;
+ border-top:0;
+ border-left:1px solid #e9e8e6;
+}
+.hero-month-card .slide-stat{padding:0;min-width:0}
+.hero-month-card .slide-stat+div{padding:0;border:0}
+.hero-month-card .slide-stat span{font-size:10.5px;line-height:1.35;white-space:nowrap}
+.hero-month-card .slide-stat b{display:block;font-size:15px;line-height:1.4;margin-top:2px;white-space:nowrap;letter-spacing:-.5px}
+.hero-month-card .hero-controls{margin-top:12px}
+@media(max-width:380px){
+ .hero-month-card{padding:16px 15px 12px}
+ .hero-month-card .slide-overview{grid-template-columns:minmax(0,1fr) 79px;gap:7px;margin-top:11px}
+ .hero-month-card .slide-duration .time-value,
+ .hero-month-card .slide-duration .time-value:last-of-type{font-size:25px;letter-spacing:-1.2px}
+ .hero-month-card .slide-duration .time-unit{font-size:11px;margin:0 2px 0 1px}
+ .hero-month-card .slide-ring{width:53px;height:53px;flex-basis:53px}
+ .hero-month-card .slide-headline{gap:4px}
+ .hero-month-card .slide-stats{padding-left:9px;gap:7px}
+ .hero-month-card .slide-stat span{font-size:10px}
+ .hero-month-card .slide-stat b{font-size:13px}
+}
+/* 기록이 100시간 이상이면 다른 정보가 잘리지 않도록 별도 정돈 */
+.hero-month-card .slide-overview.time-long .slide-headline{flex-wrap:wrap;row-gap:5px}
+.hero-month-card .slide-overview.time-long .slide-ring{width:51px;height:51px;flex-basis:51px}
 </style>
 </head>
 <body>
 <div class="app">
-<header class="header"><div class="brand"><img class="brand-logo" src="./logo-hangeol.png?v=20261013-custom-r12" alt="한결 로고"><p>하루하루 쌓아가는 나의 시간</p></div><div class="month-select" id="month-control"><button id="month-prev" aria-label="이전 달">‹</button><span id="month-label"></span><button id="month-next" aria-label="다음 달">›</button></div></header>
+<header class="header"><div class="brand"><img class="brand-logo" src="./logo-hangeol.png?v=20261013-cardlayout-r14" alt="한결 로고"><p>하루하루 쌓아가는 나의 시간</p></div><div class="month-select" id="month-control"><button id="month-prev" aria-label="이전 달">‹</button><span id="month-label"></span><button id="month-next" aria-label="다음 달">›</button></div></header>
 <main>
 <section class="page" id="page-home">
 <section class="card hero-month-card" aria-label="이번 달 항목별 누적시간"><div class="hero-carousel" id="hero-carousel" tabindex="0"></div><div class="hero-controls"><button class="slide-arrow" id="hero-prev" aria-label="이전 항목">‹</button><div class="slide-dots" id="hero-dots"></div><button class="slide-arrow" id="hero-next" aria-label="다음 항목">›</button></div><span id="hero-count" hidden aria-hidden="true"></span></section>
@@ -117,7 +182,7 @@ input,textarea,select{font-size:16px!important}
 </section>
 <section class="page" id="page-stats" hidden><section class="card"><div class="year-switch"><h2 style="font-size:18px;margin:0">올해 누적 시간</h2><div><button id="year-prev" aria-label="이전 연도">‹</button><button id="year-next" aria-label="다음 연도">›</button></div></div><div id="year-period" class="year-caption"></div><div id="year-total" class="year-total"></div><div class="stats-grid"><div><div class="stat-label">기록한 달</div><div id="year-months" class="stat-number"></div></div><div><div class="stat-label">기록한 달 평균</div><div id="year-avg" class="stat-number"></div></div></div></section><section class="card"><div class="section-heading"><h2>월별 기록 추이</h2></div><p class="small-sub">9월부터 다음 해 8월까지의 기록</p><div id="monthly-bars"></div></section><section class="card"><div class="section-heading"><h2>항목별 기록 합계</h2></div><div class="segmented"><button id="stats-month" class="active">선택한 달</button><button id="stats-year">올해 (9월~8월)</button></div><div id="category-totals"></div></section></section>
 <section class="page" id="page-records" hidden><section class="card"><div class="section-heading"><h2>날짜별 기록</h2><span class="pill" id="records-count"></span></div><p class="small-sub">기록을 수정하거나 삭제할 수 있어요.</p><div id="all-records"></div></section></section>
-<section class="page" id="page-settings" hidden><section class="card"><div class="section-heading"><h2>항목별 목표 설정</h2><button class="button outline" id="add-category">+ 항목 추가</button></div><p class="small-sub">추가한 항목만 홈에 표시돼요. 아이콘·목표·색상을 설정하세요.</p><div id="category-settings"></div></section><section class="card"><div class="section-heading"><h2>내 기록 관리</h2></div><div class="settings-item"><h3>백업 및 복원</h3><p>기록은 이 기기에 저장돼요. 변경하기 전에 백업 파일을 저장해 주세요.</p><div class="settings-actions"><button id="export-json" class="button outline">전체 백업</button><button id="import-json" class="button outline">백업 복원</button><button id="export-csv" class="button outline">CSV 내보내기</button><input id="import-file" type="file" accept=".json,application/json" hidden></div></div><div class="settings-item"><h3>기록 저장 방식</h3><p>기록은 브라우저의 기기 내 저장소를 사용합니다. Safari와 홈 화면 앱이 서로 별도 저장 공간을 사용하는 경우가 있으므로 백업을 보관하세요.</p></div></section><p class="subtle-copy">한결 · 개인 시간 기록 앱<br>홈 화면에 추가해 사용하면 편리해요.<br><small style="font-size:10px">앱 버전 r12</small></p></section>
+<section class="page" id="page-settings" hidden><section class="card"><div class="section-heading"><h2>항목별 목표 설정</h2><button class="button outline" id="add-category">+ 항목 추가</button></div><p class="small-sub">추가한 항목만 홈에 표시돼요. 아이콘·목표·색상을 설정하세요.</p><div id="category-settings"></div></section><section class="card"><div class="section-heading"><h2>내 기록 관리</h2></div><div class="settings-item"><h3>백업 및 복원</h3><p>기록은 이 기기에 저장돼요. 변경하기 전에 백업 파일을 저장해 주세요.</p><div class="settings-actions"><button id="export-json" class="button outline">전체 백업</button><button id="import-json" class="button outline">백업 복원</button><button id="export-csv" class="button outline">CSV 내보내기</button><input id="import-file" type="file" accept=".json,application/json" hidden></div></div><div class="settings-item"><h3>기록 저장 방식</h3><p>기록은 브라우저의 기기 내 저장소를 사용합니다. Safari와 홈 화면 앱이 서로 별도 저장 공간을 사용하는 경우가 있으므로 백업을 보관하세요.</p></div></section><p class="subtle-copy">한결 · 개인 시간 기록 앱<br>홈 화면에 추가해 사용하면 편리해요.<br><small style="font-size:10px">앱 버전 r14</small></p></section>
 </main>
 </div>
 <nav class="tabbar" aria-label="앱 메뉴"><div class="tabbar-inner"><button class="navbtn active" data-page="home"><span data-icon="home"></span>홈</button><button class="navbtn" data-page="stats"><span data-icon="chart"></span>통계</button><button class="navbtn plus" id="bottom-add" aria-label="시간 직접 입력"><span data-icon="plus"></span></button><button class="navbtn" data-page="records"><span data-icon="list"></span>기록</button><button class="navbtn" data-page="settings"><span data-icon="settings"></span>설정</button></div></nav>
@@ -125,6 +190,6 @@ input,textarea,select{font-size:16px!important}
 <dialog id="category-dialog"><form class="dialog-inside" id="category-form"><h2 id="category-title">항목 추가</h2><p>아이콘을 고르면 항목이 추가돼요. 기록과 목표는 항목별로 관리됩니다.</p><label class="form-label" id="cat-icon-label">아이콘 선택</label><div id="cat-icon-choices" class="cat-picker cat-preset-picker" role="group" aria-labelledby="cat-icon-label"></div><input type="hidden" id="cat-icon"><label class="form-label" for="cat-color">표시 색상</label><select id="cat-color" class="field"><option value="#778CB8">파랑</option><option value="#66A08E">초록</option><option value="#B88A69">주황</option><option value="#A58AB7">보라</option><option value="#C47784">분홍</option><option value="#8D918D">회색</option></select><label class="form-label">월 목표 시간</label><div class="field-row"><div><label class="form-label" for="cat-goal-h">시간</label><input id="cat-goal-h" type="number" class="field" min="0" max="999" required></div><div><label class="form-label" for="cat-goal-m">분</label><input id="cat-goal-m" type="number" class="field" min="0" max="59" required></div></div><p class="form-hint">0시간 0분이면 목표 미설정으로 표시돼요.</p><div class="dialog-actions"><button type="button" class="button outline" id="cancel-category">취소</button><button type="submit" class="button">저장</button></div><button id="delete-category" class="link-button" type="button" style="display:none;width:100%;text-align:center;margin-top:15px;color:#b34b4b">이 항목 삭제</button></form></dialog>
 <dialog id="goal-dialog"><form class="dialog-inside" id="goal-form"><h2 id="goal-title">월 목표 설정</h2><p>설정한 목표는 매달 반복 적용됩니다.</p><div class="field-row"><div><label class="form-label" for="goal-hours">시간</label><input class="field" id="goal-hours" type="number" min="0" max="999" required></div><div><label class="form-label" for="goal-mins">분</label><input class="field" id="goal-mins" type="number" min="0" max="59" required></div></div><div class="dialog-actions"><button type="button" class="button outline" id="goal-cancel">취소</button><button type="submit" class="button">목표 저장</button></div></form></dialog>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
-<script src="./app.js?v=20261013-custom-r12" defer></script>
+<script src="./app.js?v=20261013-cardlayout-r14" defer></script>
 </body>
 </html>
