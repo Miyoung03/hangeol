@@ -3,11 +3,17 @@ const $=id=>document.getElementById(id);const KEY='hangeol-records-v1';const OLD
 const ICONS={play:'<path d="m8 5 11 7-11 7V5z"/>',stop:'<rect x="6" y="6" width="12" height="12" rx="2"/>',pencil:'<path d="m16 5 3 3M4 20l4.6-.9L20 7.7a2.1 2.1 0 0 0-3-3L5.6 16.1 4 20z"/>',home:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1z"/>',chart:'<rect x="4" y="12" width="3" height="8" rx="1"/><rect x="10.5" y="5" width="3" height="15" rx="1"/><rect x="17" y="9" width="3" height="11" rx="1"/>',plus:'<path d="M12 5v14M5 12h14"/>',list:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',settings:'<path d="M10 3h4l.6 2.3 2 .8 2.1-1.2 2.8 2.8-1.2 2.1.8 2L23 12l-2.7.6-.8 2 1.2 2.1-2.8 2.8-2.1-1.2-2 .8L14 22h-4l-.6-2.9-2-.8-2.1 1.2-2.8-2.8 1.2-2.1-.8-2L1 12l2.9-.6.8-2-1.2-2.1 2.8-2.8 2.1 1.2 2-.8L10 3z"/><circle cx="12" cy="12" r="3"/>',trash:'<path d="M4 7h16M10 11v7M14 11v7M6 7l1 14h10l1-14M9 7V4h6v3"/>'};
 const icon=(name)=>`<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]||''}</svg>`;
 const CAT_ICONS={
- '공부':'<rect x="4" y="5" width="16" height="12" rx="1.5"/><path d="M2 20h20l-2-3H4z"/>',
- '운동':'<path d="m4 10 3 3m10-6 3 3M8 14l6-6m-9 3-2-2 4-4 2 2m6 10 2 2 4-4-2-2M9 17l8-8"/>',
+ '봉사':'<rect x="3.5" y="9" width="17" height="12" rx="2.7"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+ '공부':'<path d="M12 6C9 4 5 4 2 5v14c4-1 7-1 10 1 3-2 6-2 10-1V5c-3-1-7-1-10 1Zm0 0v14"/>',
  '독서':'<path d="M12 6C9 4 5 4 2 5v14c4-1 7-1 10 1 3-2 6-2 10-1V5c-3-1-7-1-10 1Zm0 0v14"/>',
- '기타':'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
- '봉사':'<rect x="3.5" y="9" width="17" height="12" rx="2.7"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>'
+ '책':'<path d="M12 6C9 4 5 4 2 5v14c4-1 7-1 10 1 3-2 6-2 10-1V5c-3-1-7-1-10 1Zm0 0v14"/>',
+ '운동':'<rect x="3" y="9" width="3" height="6" rx="1.2"/><rect x="18" y="9" width="3" height="6" rx="1.2"/><rect x="7" y="7" width="2.5" height="10" rx="1.1"/><rect x="14.5" y="7" width="2.5" height="10" rx="1.1"/><path d="M9.5 12h5"/>',
+ '업무':'<rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 4.5h6a1 1 0 0 1 1 1V7H8V5.5a1 1 0 0 1 1-1Z"/><path d="m9 11 1.5 1.5L13 10"/><path d="m9 15 1.5 1.5L13 14"/><path d="M14.8 11H16M14.8 15H16"/>',
+ '가정':'<path d="M3.5 10.5 12 4l8.5 6.5"/><path d="M5.5 9.7V19a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.7"/><path d="M10 20v-5h4v5"/>',
+ '자기관리':'<path d="M18.5 5.5c-5 .2-9 3.6-10.7 8.3-.6 1.6-.8 3.1-.8 4.7 1.5 0 3.1-.2 4.7-.8 4.7-1.7 8.1-5.7 8.3-10.7-.6-.9-.6-.9-1.5-1.5Z"/><path d="M7.5 18.5c2.4-2.8 5.1-5.4 8.1-7.7"/>',
+ '모임':'<circle cx="12" cy="8" r="2.7"/><path d="M6.5 18c.4-2.7 2.6-4.5 5.5-4.5s5.1 1.8 5.5 4.5"/><circle cx="5.3" cy="10.2" r="2"/><circle cx="18.7" cy="10.2" r="2"/><path d="M2.8 18c.2-1.8 1.5-3.1 3.3-3.5"/><path d="M21.2 18c-.2-1.8-1.5-3.1-3.3-3.5"/>',
+ '기타':'<circle cx="6" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1.3" fill="currentColor" stroke="none"/>',
+ '휴식':'<circle cx="12" cy="6.7" r="1.8"/><path d="M7.5 11.5c1.3 1.2 2.7 1.8 4.5 1.8s3.2-.6 4.5-1.8"/><path d="M8.5 21l1.2-4.2M15.5 21l-1.2-4.2"/><path d="M8 16c.8 1.6 2.2 2.4 4 2.4s3.2-.8 4-2.4"/>'
 };
 function setCategoryVisual(el,cat){const svg=CAT_ICONS[cat.name];if(svg)el.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${svg}</svg>`;else el.textContent=cat.emoji;}
 
